@@ -5,7 +5,7 @@ Problem (INFRA_PLAN §4): ``data/hypospace`` holds 70-89MB single-object JSONs
 ~0.5GB transient RAM, and the 200-cell grids re-load the same file per cell —
 the dominant fixed cost of small jobs.
 
-Design (measured on c89, 89MB voxel file):
+Design (measured on an 89MB voxel file):
 
 * **process memo** — one parse per process per file version
   (keyed by resolved path + size + mtime_ns); repeat loads cost ~0.3ms.

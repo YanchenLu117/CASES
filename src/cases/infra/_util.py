@@ -1,8 +1,8 @@
 """Small shared utilities for the infra package (stdlib only).
 
 Everything here is deliberately dependency-free so the package runs
-identically in every project environment (cases-core, made-gpu, vcc-4
-base python) and on both servers (c89 / vcc-4).
+identically in every project environment (cases-core, GPU envs, base python)
+and across operating systems.
 """
 from __future__ import annotations
 

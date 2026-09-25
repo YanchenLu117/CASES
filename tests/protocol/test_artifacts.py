@@ -20,7 +20,7 @@ def _full_run_manifest() -> dict:
     builder = RunManifestBuilder()
     builder.set("p0_registry_hash", "sha256:abc")
     builder.set("commits", {"cases": "023ba37"})
-    builder.set("environment", "c89/cases-core")
+    builder.set("environment", "cases-core")
     builder.set("model_config_ids", ["deepseek-v4-flash"])
     builder.set("prompts", {"induction": "sha256:p"})
     builder.set("seed", 7)

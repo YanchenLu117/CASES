@@ -4,7 +4,7 @@ We use OmegaConf + dataclasses (strict typed validation, YAML/CLI merge)
 WITHOUT the full Hydra launcher stack: the paradigm needs supervisor-driven
 batch loops over a frozen preregistry, not per-run dynamic composition, and
 a plain `OmegaConf.merge(structured, yaml)` keeps the dependency surface
-minimal on air-gapped containers (c89). Rationale recorded in README / ADR-0001.
+minimal on air-gapped containers. Rationale recorded in README / ADR-0001.
 """
 from dataclasses import dataclass, field
 

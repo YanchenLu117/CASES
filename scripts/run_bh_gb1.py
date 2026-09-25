@@ -151,7 +151,7 @@ _CLADE_REPO = ROOT / "external" / "repos" / "gb1_clade"
 _CLADE_LOCK_FINGERPRINT = "06c89367fd899e6c"   # content_fingerprint, lock 2026-08-31
 _GRYFFIN_PIN = ("gryffin==1.0.0 PyPI sdist sha256 "
                 "013d534047b8b12626015be75eba0be0dcc8463dfc58e21b198eb378a54a0948; "
-                "wheel rebuilt on vcc-4 from official sources (2 Cython modules "
+                "wheel rebuilt from official sources (2 Cython modules "
                 "regenerated for py3.10; stale pre-generated .c incompatible)")
 
 
