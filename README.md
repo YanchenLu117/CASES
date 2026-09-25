@@ -20,8 +20,11 @@ Included benchmark lanes:
   table; Hamming-1 propagation recovery.
 - **HypoSpace** — set-valued hypothesis generation (boolean / causal / 3d
   domains) through the *official* evaluator repository, pinned by commit.
-- **DiscoveryBench** (`cases_exp` package) — native scientific-discovery
-  episodes (E2 / E2b methods) over the official DiscoveryBench metadata.
+- **ResearchBench** (`cases_exp` package) — research-hypothesis composition
+  episodes (E1 methods: direct refine / fixed schema / editable structured /
+  CASES substrate lanes with the one-edit audit loop) over the official
+  ResearchBench tasks; scored by the official `matched_score` (0–5) judge
+  with a frozen cross-family evaluation model.
 
 ## Install
 
@@ -70,15 +73,31 @@ python scripts/run_bh_gb1.py --project all --phase figs
 Arms, seeds, checkpoints and batch schedules are frozen in
 `configs/bh/default.yaml` and `configs/gb1/default.yaml`.
 
-## DiscoveryBench lane (`cases_exp`)
+## ResearchBench lane (`cases_exp`)
 
-```bash
-python -m cases_exp.benchmarks.run_e2  --rors synth --split dev --limit 16
-python -m cases_exp.benchmarks.run_e2b --rors synth --split dev --limit 16
+The E1 hypothesis-composition methods ship in `cases_exp/methods/e1_methods.py`
+(arm registry `E1_METHODS`: `direct_refine`, `fixed_schema`, `editable_structured`,
+`cases_static`, `cases_full`, plus the `h5_nc` / `h5_nce` factorial ablation arms):
+
+```python
+from cases_exp.models.openai_compat import LLMClient, Budget
+from cases_exp.methods.e1_methods import E1_METHODS
+
+client = LLMClient(base_url=..., model=..., api_key=...)   # any OpenAI-compatible endpoint
+method = E1_METHODS["cases_full"](client, Budget(...))     # construct -> audit -> compose
+result = method.run(task)   # task: research question + background survey (+ empty inspirations)
+print(result.final_answer, result.representation)
 ```
 
-`--model` selects a named *layer*; each layer is configured purely through
-environment variables (no model id is hardcoded anywhere):
+Tasks come from the official ResearchBench release (github.com/ankitala/ResearchBench,
+MIT — see THIRD_PARTY.md); scoring uses the official `matched_score` (0–5) judge prompt,
+run frozen at temperature 0 with a cross-family evaluation model. The generation side
+never sees gold hypotheses.
+
+The package also ships the native discovery-episode runners
+(`cases_exp/benchmarks/run_e2.py` / `run_e2b.py`). `--model` selects a named *layer*;
+each layer is configured purely through environment variables (no model id is
+hardcoded anywhere):
 
 ```bash
 export CASES_LAYER_MYLLM_BASE_URL="https://..."
@@ -118,8 +137,8 @@ src/cases            core library
   llm/               OpenAI-compatible client, layer registry, metering
   metrics/ api/ runner/ runout/ prereg/ data/ logging/ infra/
   adapters/          hypospace · bh · gb1 · gate · _template + registry
-src/cases_exp        DiscoveryBench lane (benchmarks, methods, substrate,
-                     evaluators, dispatcher)
+src/cases_exp        ResearchBench composition methods (E1) + discovery-episode
+                     runners (benchmarks, methods, substrate, evaluators, dispatcher)
 scripts/             run_bh_gb1.py, setup_external.py, external_lock.py,
                      download_benchmarks.sh, jsonl_writer.py
 configs/ tests/ docs/

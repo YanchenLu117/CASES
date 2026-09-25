@@ -11,6 +11,7 @@ by their own licenses.
 | Buchwald–Hartwig yield table + descriptors | [`doylelab/rxnpredict`](https://github.com/doylelab/rxnpredict) (master) | MIT | optional, `scripts/download_benchmarks.sh` |
 | GB1 active-learning specialist assets | [`jsunn-y/ALDE`](https://github.com/jsunn-y/ALDE) (main) | MIT | optional, `scripts/download_benchmarks.sh` |
 | GB1 clustering + full measured table (`Input/GB1.xlsx`, 149,361 variants) | [`WeilabMSU/CLADE`](https://github.com/WeilabMSU/CLADE) (main) | MIT | optional, `scripts/download_benchmarks.sh` |
+| ResearchBench tasks + official `matched_score` (0–5) judge scorer | [`ankitala/ResearchBench`](https://github.com/ankitala/ResearchBench) (ACL Findings 2026, arXiv:2503.21248; dataset [`ankilok/ResearchBench`](https://huggingface.co/datasets/ankilok/ResearchBench)) | MIT | referenced by the `cases_exp` ResearchBench lane; not vendored |
 
 Pins for every fetched checkout are recorded in `external/repos.lock.yaml`
 (`python scripts/external_lock.py --verify` re-checks them against disk).
