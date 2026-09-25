@@ -94,6 +94,22 @@ MIT — see THIRD_PARTY.md); scoring uses the official `matched_score` (0–5) j
 run frozen at temperature 0 with a cross-family evaluation model. The generation side
 never sees gold hypotheses.
 
+Scoring is a thin wrapper around the official `score-generate` CLI (install the
+upstream package once: `pip install git+https://github.com/ankitala/ResearchBench`):
+
+```bash
+export CASES_JUDGE_BASE_URL="https://YOUR-JUDGE-ENDPOINT.example.com/v1"
+export CASES_JUDGE_API_KEY="..."
+export CASES_JUDGE_MODEL="qwen38-27b"      # the paper's frozen judge setting
+
+python scripts/run_rb_judge.py --pred generations.jsonl --data tasks.jsonl --out scores.json
+```
+
+`--pred` rows carry `{"sample_id", "final_hypothesis"}`; `--data` rows carry
+`{"sample_id", "gold_hypothesis", "gold_key_points"}`. The official CLI fixes
+temperature at 0 and skips already-scored rows (resumable); the judge endpoint
+is read from the environment and never hardcoded.
+
 The package also ships the native discovery-episode runners
 (`cases_exp/benchmarks/run_e2.py` / `run_e2b.py`). `--model` selects a named *layer*;
 each layer is configured purely through environment variables (no model id is
