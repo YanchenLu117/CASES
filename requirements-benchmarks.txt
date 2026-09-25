@@ -1,0 +1,13 @@
+# Optional extras for the benchmark lanes (BH, GB1, HypoSpace) and LLM clients.
+# The core package installs with: pip install -e .
+openai>=1.40        # cases.llm OpenAI-compatible client (vLLM / any endpoint)
+pyyaml>=6.0         # YAML configs + external/repos.lock.yaml
+scikit-learn>=1.4   # GP baselines (also available as the [recovery] extra)
+matplotlib>=3.8     # runout figures
+pandas>=2.1         # benchmark tables
+openpyxl>=3.1       # GB1 measured-table xlsx reader
+sympy>=1.12         # official HypoSpace evaluator (external/repos/hypospace)
+requests>=2.31      # HypoSpace 3d domain
+# Optional specialists (experimental arms only):
+#   rdkit>=2023.9               (BH molecular features; a one-hot fallback exists)
+#   torch / gpytorch / botorch  (deep-kernel and BO reference arms)

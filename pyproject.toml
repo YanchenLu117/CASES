@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cases"
+version = "1.0.0"
+description = "CASES — Constructing and Auditing Scientific Exploration Substrates"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "omegaconf>=2.3",
+    "orjson>=3.9",
+    "pyyaml>=6.0",
+    "openai>=1.40",
+]
+
+[project.optional-dependencies]
+recovery = ["scikit-learn>=1.3"]
+dev = ["pytest>=7.0", "ruff>=0.1"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --import-mode=importlib"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

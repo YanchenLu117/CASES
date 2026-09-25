@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cases-paradigm EvidenceLedger record",
+  "description": "Append-only ledger record. Superset of the D_made v8_scored ledger schema (run_id/ts/phase/arm/model/attempt/llm_calls/retries/parse_failures/latency_s/tokens/cap_state keep their names and meaning); new-paradigm fields are additive and nullable so legacy records migrate losslessly.",
+  "type": "object",
+  "required": ["run_id", "ts", "phase", "arm", "model", "attempt", "llm_calls", "retries", "parse_failures", "latency_s", "tokens", "cap_state"],
+  "properties": {
+    "run_id": {"type": ["string", "null"]},
+    "cell_id": {"type": ["string", "null"]},
+    "campaign": {"type": ["string", "null"]},
+    "ts": {"type": ["string", "null"], "description": "ISO8601 timestamp"},
+    "phase": {"type": ["string", "null"]},
+    "arm": {"type": ["string", "null"]},
+    "model": {"type": ["string", "null"]},
+    "attempt": {"type": ["integer", "null"]},
+    "llm_calls": {"type": ["integer", "null"]},
+    "retries": {"type": ["integer", "null"]},
+    "parse_failures": {"type": ["integer", "null"]},
+    "latency_s": {"type": ["number", "null"]},
+    "tokens": {
+      "type": "object",
+      "properties": {
+        "prompt": {"type": ["integer", "null"]},
+        "completion": {"type": ["integer", "null"], "description": "includes reasoning tokens (cap envelope billing)"}
+      }
+    },
+    "cap_state": {
+      "type": "object",
+      "description": "per-axis 'cur/limit' strings + hit list, same shape as D_made v8_scored",
+      "properties": {
+        "llm_calls": {"type": ["string", "null"]},
+        "generated_tokens": {"type": ["string", "null"]},
+        "state_tokens": {"type": ["string", "null"]},
+        "tool_calls": {"type": ["string", "null"]},
+        "oracle": {"type": ["string", "null"]},
+        "wall_s": {"type": ["string", "null"]},
+        "hit": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "event": {"type": ["string", "null"], "enum": ["start", "metrics", "end", null]},
+    "status": {"type": ["string", "null"]},
+    "finish_reason": {"type": ["string", "null"]},
+    "registry_sha256": {"type": ["string", "null"]},
+    "git_commit": {"type": ["string", "null"]},
+    "config_sha256": {"type": ["string", "null"]},
+    "endpoint_sha256_16": {"type": ["string", "null"]},
+    "wandb_run_id": {"type": ["string", "null"]}
+  }
+}

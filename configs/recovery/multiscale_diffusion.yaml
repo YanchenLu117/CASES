@@ -1,0 +1,6 @@
+backend: multiscale_diffusion
+# Best graph-native backend (runner-up to rbf_gp).  Ties rbf_gp when the k-NN
+# scientific graph is dense enough (k=20); candidate for the B5 graph_ensemble.
+time_bank: [0.25, 1.0, 4.0, 16.0]
+sigma_0: 0.05
+noise: 0.2

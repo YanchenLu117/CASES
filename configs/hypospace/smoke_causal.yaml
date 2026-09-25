@@ -1,0 +1,9 @@
+# Smoke config: small causal tasks (A4 "causal small").
+domain: causal
+dataset: data/hypospace/dev/causal_dev.json
+instances: 3
+seed: 0
+n_queries: 10
+state_token_budget: 1800
+provider: stub
+structural_coverage: true

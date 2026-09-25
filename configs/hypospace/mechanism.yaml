@@ -1,0 +1,19 @@
+# Mechanism experiment budget / fairness rules (experiment doc A3 + Rule 1-4).
+# All five mechanisms share: n_queries, state_token_budget, LLM backend.
+mechanisms:
+  - independent
+  - history
+  - dedup_archive
+  - complexity_stratified
+  - cases
+budget:
+  n_queries: 30            # official quick-start scale (n_samples=30 protocol)
+  state_token_budget: 1800 # B_state, identical across mechanisms
+  llm: deepseek-v4-flash   # Rule 1: every rerun uses the same LLM via LLMProvider
+oracle: none               # HypoSpace validator is the deterministic official evaluator (Rule 2)
+statistics:                # frozen protocol (experiment doc, "统计方案也提前冻结")
+  unit: task
+  paired_bootstrap_ci: true
+  paired_wilcoxon: true
+  effect_size: true
+  multiple_comparison_correction: true

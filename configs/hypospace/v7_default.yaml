@@ -1,0 +1,33 @@
+# HypoSpace V7 config — §5 (FROZEN/PRIMARY/PILOT-FREEZE 标注)
+thesis: "set-valued recovery 是独立目标; 稀疏证据恢复未见解结构 (C1/C2)"
+role: "干净 set-valued 语言侧恢复 + 迭代机制主产 (HypoSpace+BH)"
+
+domains: [causal, voxel3d, boolean]          # §5.3 PRIMARY 三域
+difficulty: [easy, medium, hard]             # 官方难度, 保留 |H_O| 变化
+
+anti_leakage:                                 # §5.3 FROZEN
+  evaluator_only: [H_O, "|H_O|", complexity_histogram]
+  budget_from_dev_only: true                 # 不得按测试实例真实 |H_O| 调 B
+query_budget:                                 # §5.3 PILOT-FREEZE
+  formula: "B_dk = 10*q_dk"
+  rounds: 10
+  q_dk: null                                 # 需 dev/pilot 冻结
+
+protocol:                                     # §5.4
+  rounds: 10
+  back_feedback: [proposal, validity_flag, canonical_identity]
+
+baselines:                                    # §5.5 全 required
+  - iid_sample
+  - reject_duplicate
+  - history_prompt
+  - diversity_prompt
+  - fair_complexity_stratified
+  - ground_truth_proportional   # diagnostic only, oracle-assisted
+
+metrics:                                      # §5.6
+  primary: [RR, AURC_RR]
+  secondary: [VR, NR, simple_RR, complex_RR, recovery_gap, invalid_rate, dup_rate, tokens_per_recovered]
+  token_accounting: "recovery per 1k generated tokens (coverage bought by sampling)"
+
+statistics_scale: ">=30 instances per domain x difficulty, paired on same instances"  # §5.8

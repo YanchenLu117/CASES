@@ -1,0 +1,65 @@
+# BH (Buchwald-Hartwig HTE) this config — §9 (FROZEN/PRIMARY/PILOT-FREEZE)
+role: "稀疏→稠密化学解空间恢复 + 与强 BO 对抗 + 迭代曲线主产 (HypoSpace+BH)"
+thesis_claim: C2 (稀疏证据恢复未见解结构; 必须是 set-valued 恢复而非纯优化)
+
+data:                                      # §9.2 FROZEN wording
+  # §9.2 frozen public-facing description (the published doylelab count).
+  description: "3,955 experimentally measured BH reaction records, near-complete high-throughput landscape"
+  # 口径标注 (honest data-source bookkeeping): the REPO data_table.csv actually
+  # loaded by bh/data.py parses to 4,599 measured records = the 16x4x3x24 grid
+  # minus 9 missing-yield rows (all 4,599 candidate tuples unique).  The §9.2
+  # "3,955" is the published count and must NEVER be conflated with the 4,599
+  # implementation-side oracle.  See bh/data.py module docstring.
+  impl_loaded_records: 4599               # measured records actually loaded
+  published_count_3955_reference: "tech-report §9.2 published number; not the loaded row count"
+  source_repo: external/repos/bh_rxnpredict   # doylelab/rxnpredict (downloading)
+  license: MIT
+  fields: [yield_data, descriptors, data_table.csv]
+  do_NOT_call_it: "3,960-point Cartesian product (missing measurements)"
+
+candidate_and_oracle:                       # §9.3
+  candidate: "x=(a, l, b, d)"   # aryl halide, ligand/catalyst, base, additive
+  oracle: "held-out measured yield y(x) in [0,100]"
+  invalid_proposal: "reject without revealing yield; predefine slot consumption; never silently substitute"
+  frozen_info_allowed: [component_identity, SMILES, precomputed_descriptors, one_factor_substitution]
+  frozen_info_forbidden: [unqueried_yield, outcome_derived_clusters, full_table_region_labels]
+
+solution_definition:                        # §9.4 PRIMARY frozen
+  primary: "S* = {x : y(x) >= q_0.95(y)}"  # top 5% yield
+  optional_sensitivity: [top10%, "yield>=80 if enough positives"]
+
+campaign:                                   # §9.6 PRIMARY, PILOT-FREEZE batching
+  n_initial: 40
+  batch_size_q: 20
+  rounds_T: 10
+  total_budget_B: 240        # 40 + 10*20
+  checkpoints: [2,4,6,8,10]
+  same_initial_40_per_seed: true
+  pilot_freeze: "(n0,q) may change once on pilot (disjoint seeds) only; freeze before comparison"
+  optional_dkl_repro: "5% init [~198 labels], 95% holdout, EI, 20 steps, >50 inits — sanity only"
+
+cases_implementation:                        # §9.7
+  state_model: [categorical_identity, morgan_fp, one_factor_replacement, calibrated_prob_yield]
+  readout_quantity: "p_t(x)=P(y(x)>=gamma | D_t)"
+  readout_bounded: [observed_supported, inferred_high_prob_alternatives, under_covered_regions]
+
+baselines:                                  # §9.8
+  - B0_random                    # floor + prevalence
+  - B1_history_llm               # same LLM, raw history, no state
+  - B2_scalar_llm                # identities + scalar yields + best-so-far
+  - B3_scalar_dedup_diversity    # + diversity/dedup
+  - B4_morganfp_gp_bo            # GP + EI
+  - B5_tpe                       # Tree-structured Parzen Estimator
+  - B6_morganfp_dkl_bo           # REQUIRED STRONG: 512-bit r2 Morgan concat->2048, DKL+GP+EI
+
+metrics:                                    # §9.9 PRIMARY = recovery family
+  optimization_secondary: [BestYield@B, Top5HitRate@B, distinct_top5_found, budget_to_first_hit]
+  recovery_primary: [AURC, RegionRecall, UnseenRecall, UnseenPrecision, F1, PR_AUC, Brier, calib_err, UncoveredDistance]
+  eval_on_unqueried_only: true
+  resource: [oracle_calls, LLM_in/out/total_tokens, LLM_calls, surrogate_time, wallclock]
+
+statistics:                                 # §9.10
+  paired_seeds_primary: 50        # min 30 after power check
+  ci: "paired bootstrap 95%"
+  tests: "CASES vs History / Scalar+Diversity / GP-BO / DKL-BO on AURC+RegionRecall"
+  multiplicity: "correct preregistered primary comparisons only"

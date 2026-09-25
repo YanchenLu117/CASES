@@ -1,0 +1,12 @@
+# Pinned third-party repositories used by optional CASES components.
+# Verify an existing checkout:  python scripts/external_lock.py --verify
+# Fetch the pinned checkouts:   python scripts/setup_external.py
+schema: cases_external_lock_v1
+generated_under: CASES v1.0.0
+repos:
+  # Official HypoSpace evaluator repo, required by src/cases/adapters/hypospace
+  # (override its location with CASES_HYPOSPACE_REPO).  MIT licensed.
+  hypospace:
+    pin_type: git_commit
+    url: https://github.com/CTT-Pavilion/_HypoSpace
+    commit: c69e9318577b34b5b896996571aefd4ba6053f58

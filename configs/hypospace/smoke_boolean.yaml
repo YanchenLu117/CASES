@@ -1,0 +1,9 @@
+# Smoke config: Boolean depth-2 tasks (A4 "Boolean depth 2").
+domain: boolean
+dataset: data/hypospace/dev/boolean_dev.json
+instances: 3
+seed: 1
+n_queries: 10
+state_token_budget: 1800
+provider: stub
+structural_coverage: true

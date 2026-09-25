@@ -1,0 +1,34 @@
+# GB1 this config — §10 (FROZEN/PRIMARY)
+role: "蛋白跨域复制 BH-style 恢复 (C2跨域)"
+thesis_claim: "Qualitative replication of BH recovery advantage in protein space"
+
+data:                                        # §10.2
+  oracle: "149,361 experimentally measured variants ONLY"   # FROZEN hard boundary
+  imputed: "10,639 imputed variants — NOT primary oracle"
+  sources: 
+    measured: "eLife supp File 1 (Wu 2016)"
+    imputed_file: "eLife supp File 2 (reference only)"
+  code: [external/repos/gb1_alde, external/repos/gb1_clade]
+
+campaign:                                    # §19
+  primary: "96 initial + 4*96 = 480 labels"
+  baseline_default: "CLADE 96-batch / ALDE 96+4x96"
+  clade_budget_note: "incl. final 96 variant top-set assessment = full 480"
+
+geometry:                                    # outcome-blind, FROZEN
+  primary: "Hamming-1 mutation graph"
+  allowed: [sequence_identity, one_hot, aaindex, georgiev, esm2]
+  forbidden: "similar fitness -> similarity"
+
+baselines:                                   # §19 strong
+  - ALDE: [GP, DKL, DNN_ensemble, boosting; Greedy/UCB/Thompson acquisition]
+  - CLADE: "clustering + MLDE, 384 labeled + 96 assess"
+  - GP
+
+metrics:                                     # §10.6
+  primary: [RegionRecall, AURC]
+  secondary: [fitness_recovery, coverage, best_fitness, F1]
+  resource: [oracle_calls, tokens]
+
+statistics:
+  paired_seeds: "per batch level; 480-label primary"

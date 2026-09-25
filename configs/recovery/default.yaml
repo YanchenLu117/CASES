@@ -1,0 +1,9 @@
+backend: rbf_gp
+# Default recovery backend.  Phase 2 bake-off froze R* = rbf_gp — the
+# Euclidean RBF GP on outcome-blind features.  It won empirically (avg rank 1.0
+# across MADE / PiEvo / LLM-SRBench) and is the simplest sufficient backend.
+# multiscale_diffusion (B4) and graph_matern (B3) remain available alternatives;
+# see docs/v6/PHASE2_RECOVERY_FREEZE.md.
+lengthscale: 1.0
+noise: 0.2
+tune_noise: true

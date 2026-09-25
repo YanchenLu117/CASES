@@ -1,0 +1,3 @@
+backend: mean
+# B0 trivial floor — global-mean predictor.  Used only to establish the
+# non-informative baseline in the bake-off.

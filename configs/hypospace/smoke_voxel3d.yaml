@@ -1,0 +1,9 @@
+# Smoke config: 3x3x3 voxel tasks (A4 "3D grid 3").
+domain: voxel3d
+dataset: data/hypospace/dev/voxel_dev.json
+instances: 3
+seed: 2
+n_queries: 10
+state_token_budget: 1800
+provider: stub
+structural_coverage: true

@@ -1,0 +1,149 @@
+# CASES — Constructing and Auditing Scientific Exploration Substrates
+
+CASES is a research framework for running **scientific exploration campaigns**
+against benchmark oracles under an explicit audit discipline.  Instead of
+letting an agent explore a benchmark directly, CASES first **constructs** an
+explicit solution-space substrate from the scarce observations gathered so far,
+then **audits** that substrate (fidelity certificates, leakage discipline,
+budget accounting) before it is allowed to steer exploration, and only then
+runs **scoped exploration** and **recovery** of the solution set with honest,
+well-formed metrics.
+
+The core runs fully **without an LLM** (deterministic, no network); LLM-backed
+hypothesis generation plugs in through any OpenAI-compatible endpoint.
+
+Included benchmark lanes:
+
+- **Buchwald–Hartwig (BH)** — reaction-yield optimization over the official
+  5,568-experiment table; graph-propagation recovery vs. feature-GP baselines.
+- **GB1** — combinatorial protein fitness over the measured 149,361-variant
+  table; Hamming-1 propagation recovery.
+- **HypoSpace** — set-valued hypothesis generation (boolean / causal / 3d
+  domains) through the *official* evaluator repository, pinned by commit.
+- **DiscoveryBench** (`cases_exp` package) — native scientific-discovery
+  episodes (E2 / E2b methods) over the official DiscoveryBench metadata.
+
+## Install
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[recovery,dev]"        # core + GP baselines + pytest
+pip install -r requirements-benchmarks.txt   # benchmark/LLM extras
+python scripts/setup_external.py        # fetch the pinned official HypoSpace repo
+```
+
+## Smoke test (no LLM, no downloads)
+
+```bash
+./smoke_test.sh
+```
+
+constructs a model on the toy Boolean domain, ingests a batch of hypotheses,
+recovers the posterior, and emits a budgeted readout — the whole loop with
+zero network access (it fetches the pinned HypoSpace evaluator once if
+missing).
+
+Run the full test suite (~340 tests; benchmark-data-dependent tests skip
+themselves when the data has not been downloaded):
+
+```bash
+pytest -q
+```
+
+## BH / GB1 scored campaigns
+
+```bash
+# one-time: official benchmark data (both MIT-licensed upstreams)
+./scripts/download_benchmarks.sh
+
+export CASES_LLM_BASE_URL="https://YOUR-ENDPOINT.example.com/v1"
+export CASES_LLM_API_KEY="..."            # never committed
+export CASES_LLM_MODEL="zai-org/GLM-5.3-Flash"
+
+python scripts/run_bh_gb1.py --project bh  --phase pilot   # 8-seed pilot
+python scripts/run_bh_gb1.py --project bh  --phase scored --jobs 24
+python scripts/run_bh_gb1.py --project gb1 --phase scored --jobs 24
+python scripts/run_bh_gb1.py --project all --phase aggregate
+python scripts/run_bh_gb1.py --project all --phase figs
+```
+
+Arms, seeds, checkpoints and batch schedules are frozen in
+`configs/bh/default.yaml` and `configs/gb1/default.yaml`.
+
+## DiscoveryBench lane (`cases_exp`)
+
+```bash
+python -m cases_exp.benchmarks.run_e2  --rors synth --split dev --limit 16
+python -m cases_exp.benchmarks.run_e2b --rors synth --split dev --limit 16
+```
+
+`--model` selects a named *layer*; each layer is configured purely through
+environment variables (no model id is hardcoded anywhere):
+
+```bash
+export CASES_LAYER_MYLLM_BASE_URL="https://..."
+export CASES_LAYER_MYLLM_API_KEY="..."
+export CASES_LAYER_MYLLM_MODEL="..."
+python -m cases_exp.benchmarks.run_e2 --model myllm ...
+```
+
+## Configuration & environment
+
+| Variable | Purpose |
+| --- | --- |
+| `CASES_LLM_BASE_URL` / `CASES_LLM_API_KEY` / `CASES_LLM_MODEL` | OpenAI-compatible endpoint for the legacy `glm` track (see `configs/llm_endpoints.example.json`) |
+| `CASES_LAYER_<NAME>_*` | endpoint/key/model/rate caps for roster layers (`cases.llm.layers`) |
+| `CASES_HYPOSPACE_REPO` | override the official HypoSpace checkout location |
+| `CASES_BH_DATA_TABLE` | override the BH `data_table.csv` location |
+| `CASES_GB1_XLSX` | override the GB1 measured-table xlsx location |
+
+Config files: `configs/bh/default.yaml`, `configs/gb1/default.yaml` (frozen
+arms/criteria), `configs/hypospace/`, `configs/paradigm/`, `configs/recovery/`.
+
+## Repository layout
+
+```
+src/cases            core library
+  core/              evidence log, representation induction, model facade
+                     (CASESModel: update → recover → readout)
+  protocol/          admission/revision gates, controller, campaign schema,
+                     fairness metering, prereg-mapped metrics
+  certification/     completeness certificates, intervention & masking checks
+  state_strategies/  persistent-substrate state strategies
+  campaigns/         BH / GB1 campaign engines (oracles, GP baselines,
+                     recovery evaluation)
+  baselines/         reference arms behind the shared campaign tool schema
+  recovery/          posterior backends (laplacian / mean / rbf-gp / …)
+  stats/             paired-seed significance tests, TOST equivalence
+  llm/               OpenAI-compatible client, layer registry, metering
+  metrics/ api/ runner/ runout/ prereg/ data/ logging/ infra/
+  adapters/          hypospace · bh · gb1 · gate · _template + registry
+src/cases_exp        DiscoveryBench lane (benchmarks, methods, substrate,
+                     evaluators, dispatcher)
+scripts/             run_bh_gb1.py, setup_external.py, external_lock.py,
+                     download_benchmarks.sh, jsonl_writer.py
+configs/ tests/ docs/
+external/repos.lock.yaml   pinned third-party checkouts (see THIRD_PARTY.md)
+```
+
+## Design invariants (short version)
+
+1. **Audit before explore** — a substrate may only steer acquisition after its
+   fidelity certificate and leakage checks pass (protocol admission gates).
+2. **No leakage by construction** — evaluator-only truths (top-set thresholds,
+   label cardinalities, gold structures) never reach prompts, state, or
+   readouts; ground truth is loaded only through GT-stripping loaders.
+3. **Everything metered** — LLM calls, token budgets, queries and invalid
+   proposals are ledgered; budgets freeze at the terminal step.
+4. **Pinned externals** — official benchmark/evaluator code is fetched at
+   pinned commits (`scripts/external_lock.py --verify`), never vendored.
+5. **Outcome-blind freezes** — arms/seeds/criteria are frozen in prereg-style
+   configs before results are seen.
+
+See `docs/PROTOCOL.md` for the protocol-level details.
+
+## License & third-party code
+
+MIT (see `LICENSE`).  The official HypoSpace evaluator and the BH/GB1 upstream
+repositories are fetched at pinned revisions and remain under their own
+licenses — see `THIRD_PARTY.md`.

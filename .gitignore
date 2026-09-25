@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# External pinned checkouts are fetched, never committed (the lock file above
+# this directory IS tracked):
+external/repos/
+
+# Local experiment outputs
+results/
+runs/
+work/
+
+# Local endpoint configuration (never commit real keys)
+configs/llm_endpoints.json

@@ -1,0 +1,13 @@
+# HypoSpace benchmark configuration (Agent A).
+benchmark: hypospace
+adapters:
+  causal: cases.adapters.hypospace.CausalAdapter
+  boolean: cases.adapters.hypospace.BooleanAdapter
+  voxel3d: cases.adapters.hypospace.Voxel3DAdapter
+external_repo: hypospace
+llm: deepseek-v4-flash
+# HypoSpace has no scalar empirical field: evaluate raises
+# EvaluationNotApplicable; the main experiment uses no RecoveryBackend.
+recovery: none
+# Ground truth is evaluation-only (never prompts/state).
+ground_truth_usage: metrics-only

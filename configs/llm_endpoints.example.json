@@ -1,0 +1,14 @@
+{
+  "schema": "cases_llm_endpoints_v1",
+  "note": "Example layout. Copy to configs/llm_endpoints.json (git-ignored) or export CASES_LLM_BASE_URL / CASES_LLM_API_KEY. Point base_url at any OpenAI-compatible endpoint; api_key_env names the environment variable that holds the key.",
+  "primary": {
+    "glm_flash": {
+      "base_url": "https://YOUR-ENDPOINT.example.com/v1",
+      "model": "zai-org/GLM-5.3-Flash",
+      "api_key_env": "CASES_LLM_KEY",
+      "max_tokens": 8192,
+      "context": 131072,
+      "note": "replace base_url/model with your own gateway or provider endpoint; key stays in the env var named by api_key_env"
+    }
+  }
+}

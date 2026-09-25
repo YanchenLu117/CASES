@@ -1,0 +1,25 @@
+{
+  "_comment": "Freeze immutable facts before formal runs (EXPERIMENT_PLAN_FINAL_V1 §5.7/§18). Copy to run_manifest.json and fill every field; hashes must be recorded BEFORE any main outcome is inspected.",
+  "system": "TEMPLATE",
+  "tier": "S|X",
+  "official_repo": {
+    "url": "https://github.com/<org>/<repo>",
+    "pinned_commit": "<40-hex>",
+    "license": "<SPDX id>",
+    "pin_date": "YYYY-MM-DD"
+  },
+  "environment": {
+    "python": "<version>",
+    "resolved_deps_hash": "<sha256 of pip freeze>"
+  },
+  "adapter": {
+    "path": "src/cases/adapters/<system>/",
+    "diff_sha256": "<sha256 of adapter dir digest>",
+    "identity_components_preserved": ["<list frozen components>"]
+  },
+  "campaign_api": {"contract_version": "b3b4-v1", "byte_identical_content": true, "live_retrieval": false},
+  "budget": {"mode": "multiplier*|H_O|", "multiplier": 1.0, "charged_invalid": true},
+  "smoke": {"completion_rate": 0.0, "tasks": []},
+  "human_interventions_in_scored_runs": 0,
+  "applicability": [{"task": "<id>", "status": "applicable|N/A", "reason": ""}]
+}

@@ -1,0 +1,6 @@
+backend: rbf_gp
+# Phase 2 frozen reference backend R*.  Euclidean RBF GP on outcome-blind
+# scientific features (RecoveryInput.features).  Robust across graph density and
+# decisive on the recoverable MADE systems; see docs/v6/PHASE2_RECOVERY_FREEZE.md.
+lengthscale: 1.0
+noise: 0.2
