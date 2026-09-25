@@ -1,5 +1,29 @@
 # CASES — Constructing and Auditing Scientific Exploration Substrates
 
+<p align="center">
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-2ea44f"></a>
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776ab">
+  <a href="docs/PROTOCOL.md"><img alt="Audit protocol" src="https://img.shields.io/badge/protocol-PROTOCOL.md-8a63d2"></a>
+  <a href="external/repos.lock.yaml"><img alt="Pinned externals" src="https://img.shields.io/badge/externals-commit--pinned-0969da"></a>
+</p>
+
+<p align="center">
+  <img src="docs/assets/framework_overview.png"
+       alt="CASES overview: (a) the same alternatives under different organizations; (b) CASES audits an executable candidate realization against a registered task policy before activation, with bounded repair; (c) fixed substrate with evolving evidence."
+       width="100%">
+</p>
+
+<p align="center">
+  <i><b>Figure 1 — CASES overview.</b>&nbsp;
+  <b>(a)</b>&nbsp;The candidate universe is fixed; its computational organization can preserve or erase
+  task-relevant distinctions (Boolean example: A = x ∧ y, B = x ∧ ¬y must stay distinguishable).
+  <b>(b)</b>&nbsp;A proposer suggests a candidate realization (e.g., LLM-assisted); CASES audits it
+  against a <i>registered task policy</i> — scientific admissibility, semantic fidelity, structural
+  validity, executability — and only audited scopes are activated downstream, with bounded repair and
+  actor-visible audit feedback. <b>(c)</b>&nbsp;After activation the substrate's topology stays fixed
+  while evidence and readouts evolve over exploration.</i>
+</p>
+
 CASES is a research framework for running **scientific exploration campaigns**
 against benchmark oracles under an explicit audit discipline.  Instead of
 letting an agent explore a benchmark directly, CASES first **constructs** an
